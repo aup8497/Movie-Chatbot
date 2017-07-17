@@ -1,7 +1,9 @@
 import random
 import pickle
 import nltk
-
+import sys
+# reload(sys)  
+# sys.setdefaultencoding('utf-8')
 ''' 
     1. Read from 'movie-lines.txt'
     2. Create a dictionary with ( key = line_id, value = text )
@@ -124,7 +126,7 @@ def create_data_set_and_load_into_pickle():
 
 def getID(word, vocab, create=True):
     word = word.lower()
-    wid = vocab["word2id"].get(word,vocab, -1)
+    wid = vocab["word2id"].get(word, -1)
     if wid == -1:
         if create:
             wid = len(vocab["word2id"])
@@ -134,11 +136,10 @@ def getID(word, vocab, create=True):
     return wid
 
 
-def generate_vocab():
+def generate_vocab_and_load_into_pickle():
 
     with open("data.pkl", "rb") as fp:   # Unpickling
         data = pickle.load(fp)
-
 
     print('Creating vocabulary...')
     vocab = {}
@@ -166,9 +167,43 @@ def generate_vocab():
 def sen2enco(sentence):  #ak - this encodes the sentence into list of word indices
   return [getID(word, create=False) for word in nltk.word_tokenize(sentence)[:MAX_INPUT_LENGTH]]  
 
+def create_training_samples_and_save_into_pickle():
+    # call data_helper before training or testing the model
+    with open("vocab.pkl", "rb") as fp:   # Unpickling
+      vocab = pickle.load(fp)
+
+    with open("data.pkl", "rb") as fp:   # Unpickling
+      data = pickle.load(fp,encoding='ISO-8859-1')
+      # data = unicode(pickle.load(fp), 'utf-8')
+      questions = data['questions']
+      answers = data['answers']
+
+    def getID(word, create=True):
+      word = word.lower()
+      wid = vocab["word2id"].get(word, -1)
+      if wid == -1:
+          if create:
+              wid = len(vocab["word2id"])
+              vocab["word2id"][word] = wid
+          else:
+              wid = vocab["word2id"].get("<unknown>")
+      return wid
+
+    def sen2enco(sentence):  #ak - this encodes the sentence into list of word indices
+      return [getID(word, create=False) for word in nltk.word_tokenize(sentence)[:MAX_INPUT_LENGTH]]  
+
+    print('Creating training samples...')
+    training_samples = [[sen2enco(questions[num]),sen2enco(answers[num])] for num in range(len(questions)-1)]
+
+    print ('>> writing vocab data into vocab.pkl\n')
+    with open('training_samples.pkl','wb') as fp:
+        pickle.dump(training_samples,fp)
 
 if __name__ == '__main__':
     # if sys.argv[1] == '--create_data':
         create_data_set_and_load_into_pickle()
-    # elif sys.argv[1] == '--generate_vocab':
-        generate_vocab()    
+    # elif sys.argv[1] == '--generate_vocab_and_load_into_pickle':
+        generate_vocab_and_load_into_pickle()    
+    # elif sys.argv[1] == '--create_training_samples':
+        create_training_samples_and_save_into_pickle()
+
