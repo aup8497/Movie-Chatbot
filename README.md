@@ -9,7 +9,7 @@ A chatbot that is built on seq2seq model using tensorflow on movie dialog corpus
 	-pickle
 	-re
 
-####Note: After running data_helper.py data.pkl,vocab.pkl and training_samples.pkl will be created.
+#### Note: After running data_helper.py data.pkl,vocab.pkl and training_samples.pkl will be created.
 
 	1. data.pkl - This is a dictionary which contains questions and answers sentences in index of numbers of the form => {'questions':[[12,1412,35,23,3,124,35],[32,42,6,73,13,564,2,67],....],'answers'=[[312,1,643,26,41,32,6,100],[643,168,6,3,12],......]}
 
