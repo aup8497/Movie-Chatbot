@@ -2,8 +2,7 @@ import random
 import pickle
 import nltk
 import sys
-# reload(sys)  
-# sys.setdefaultencoding('utf-8')
+
 ''' 
     1. Read from 'movie-lines.txt'
     2. Create a dictionary with ( key = line_id, value = text )
